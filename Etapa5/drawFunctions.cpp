@@ -153,16 +153,39 @@ void drawCylinder(GLfloat base, GLfloat height){
 
 // Funcion para dibujar parte superior de la lámpara
 void drawLampShade(GLfloat base,GLfloat height){
-	glTranslatef(-0.13f,0.3f,0.0f);
-	glRotatef(90.0,1.0f,0.0f,0.0f);
-	glutWireCone(base,height,200,200); // Cono
-	glRotatef(90.0,-1.0f,0.0f,0.0f);
-	glTranslatef(0.0f,-base/3,0.0f);
-	glColor3f(1.0f,1.0f,0.0f);
-	glutSolidSphere(base/3,50,50); // Bombilla
-	glTranslatef(0.0f,base/3,0.0f);
-	glTranslatef(0.13f,-0.3f,0.0f);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	float cx, cy, cz, angleSh;
+	cx = -0.16f;
+	cy = 0.06f;
+	cz = 0.0f;
+	angleSh = -30.0f;
+	glTranslatef(cx, cy, cz);
+	// rotamos la cabeza de la lámpara
+	glRotatef(angleSh, 0.0f, 0.0f, 1.0f);
+	// rotar cabeza de izquierda a derecha aqui
+	drawCylinder(0.1f, height / 2);
+	glTranslatef(0.0f, -0.05f, 0.00f);
+	drawCylinder(0.065f, 0.05f);
+	glTranslatef(0.0f, 0.05f, 0.00f);
+
+	glRotatef(-90.0, 1.0f, 0.0f, 0.0f);
+	glutSolidTorus(0.05f, 0.05f, 50, 50); // Toro
+	glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+
+	glTranslatef(0.0f, 0.35f, 0.00f);
+	glRotatef(90.0, 1.0f, 0.0f, 0.0f);
+	glutSolidCone(base, height * 1.3, 200, 200); // Cono
+	glRotatef(90.0, -1.0f, 0.0f, 0.0f);
+	glTranslatef(0.0f, -0.35f, 0.00f);
+
+	//dibujar bombilla de la lámpara
+	glTranslatef(0.0f, height*1.1f,0.0f);
+	glColor3f(0.99f, 0.99f, 0.58f);	 
+	glutSolidSphere(base / 2, 50, 50); // Bombilla   
+	glColor3f(1.0f, 1.0f, 1.0f);  
+	glTranslatef(0.0f, -height*1.1f,0.0f);
+
+	glRotatef(-angleSh, 0.0f, 0.0f, 1.0f);
+	glTranslatef(-cx, -cy, -cz);	
 }
 
 // Funcion para dibujar pelota pixar
