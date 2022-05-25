@@ -57,6 +57,7 @@ void Display() {
 	referenceAxis(); // Dibujamos los ejes de referencia
     drawLamp(fAngRotacion,fAnguloInferior); // Dibujamos la lampara
 	drawPixarBall(); // Dibujamos la bola de pixar
+	
 	glutSwapBuffers(); // Intercambiamos los buffers de visualizaci�n
     glFlush(); // Limpiamos el buffer de visualizaci�n
 }

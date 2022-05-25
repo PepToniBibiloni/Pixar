@@ -13,7 +13,7 @@ const int W_HEIGHT = 500;
 int height, width;
 
 // Angulos Lampara
-GLfloat fAngRotacion=0.0f, fAnguloInferior=90.0f,fAnguloLampara=0.0f;
+GLfloat fAngRotacion=0.0f, fAnguloInferior=90.0f,fAngRotacionShade=0.0f;
 
 // Cámara
 glm::vec3 pos = glm::vec3(0.0f,1.5f,5.0f);
@@ -23,22 +23,28 @@ GLfloat pitch = 0.0f;
 GLfloat yaw = 90.0f;
 
 //Perspectivas
-enum Perspective {Cenital,Picado,Normal,Contrapicado,Nadir};
-Perspective perspective;
+#define CENITAL 0
+#define PICADO 1
+#define NORMAL 2
+#define CONTRAPICADO 3
+#define NADIR 4
+int perspective;
 bool perspAct = false;
 
 //Luces
-GLfloat ambient[] = {0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat diffuse[] = {0.8f,0.8f, 0.8f, 1.0f };
-GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat position[]={1.0f, 1.0f, 1.0f };
+GLfloat position[]={1.0f, 1.0f, 1.0f,1.0f };
+GLfloat dir[] = {10.0, 100.0,10.0}; 
 bool shade = false; 
 
 // Texturas
-GLuint texture;
+GLuint textures[2];
+
+int fillMenu,menuPersp, mainMenu;
+int menuFlag = 0;
+
 
 void reshape(int w, int h);
-void perspectiva(Perspective p);
+void perspectiva(int p);
 void Display();
 void move(GLfloat speed);
 void turn();

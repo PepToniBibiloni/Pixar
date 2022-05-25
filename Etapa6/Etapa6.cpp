@@ -13,28 +13,71 @@ void reshape(int w, int h) {
 	gluPerspective(45.0f,(GLfloat)w/(GLfloat)h, 0.1, 1000); // Establecemos la proyecci�n perspectiva
     glMatrixMode(GL_MODELVIEW); // Seleccionamos la matriz de modelado/visionado
 }
-
 // Función perspectiva
-void perspectiva(Perspective p) {
+void perspectiva(int p) {
 	switch (p){
-        case Cenital:
+        case CENITAL:
 			gluLookAt(0,3,0.15,0,0,0,0,1,0); 
             break;
-        case Picado:
+        case PICADO:
             gluLookAt(0,2.5,3,0,0,0,0,1,0);
             break;
-        case Normal:
+        case NORMAL:
             gluLookAt(0,1.3,4,0,0,0,0,1,0);  
             break;
-        case Contrapicado:
+        case CONTRAPICADO:
             gluLookAt(0,-1.5,3,0,0,0,0,1,0); 
             break;
-        case Nadir:
+        case NADIR:
             gluLookAt(0,-2,0.15,0,0,0,0,1,0);
             break;
+		default:
+			perspAct=false;
+			break;
 	}
 }
+GLuint texture(const char* file){
+	return SOIL_load_OGL_texture(
+	file,
+	SOIL_LOAD_AUTO,
+	SOIL_CREATE_NEW_ID,
+	SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
 
+}
+
+void initTexture(int i){
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D,textures[i]);
+	GLfloat plano_s[4] = {2, 0, 0, 0}; // s=x
+	GLfloat plano_t[4] = {0, 2, 0, 0}; // t=y
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+	glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+	glTexGeni (GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+	glTexGenfv (GL_S, GL_OBJECT_PLANE, plano_s);
+	glEnable (GL_TEXTURE_GEN_S);
+	glTexGeni (GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+	glTexGenfv (GL_T, GL_OBJECT_PLANE, plano_t);
+	glEnable (GL_TEXTURE_GEN_T);
+}
+
+void initTextureSphere(int i){
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D,textures[i]);
+	glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+	glTexGeni (GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	glEnable (GL_TEXTURE_GEN_S);
+	glTexGeni (GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+	glEnable (GL_TEXTURE_GEN_T);
+}
+
+void finishTexture(){
+	glBindTexture(GL_TEXTURE_2D,0);
+	glDisable(GL_TEXTURE_GEN_T);
+	glDisable(GL_TEXTURE_GEN_S);
+	glDisable(GL_TEXTURE_2D);
+}
 // Funci�n que visualiza la escena OpenGL
 void Display() {
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Borramos la escena
@@ -44,19 +87,27 @@ void Display() {
         glTranslatef(0.0, 0.5f, 0.0);
     }else{
         perspectiva(perspective);
-    }
+    } 
     glPushMatrix(); // Guardamos la matriz de modelado
-	glTranslatef(position[0], position[1], position[2]); // Trasladamos el objeto
+	glLoadIdentity();
 	glLightfv(GL_LIGHT0, GL_POSITION, position); // Actualizamos la posici�n de la luz
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient); // Actualizamos el color ambiente
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular); // Actualizamos el color especular	
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse); // Actualizamos el color difuso
-	glColor3f(1.0f, 1.0f, 0.0f); 
-	glutSolidSphere(0.1f, 50, 50); // Dibujamos una esfera
 	glPopMatrix(); // Restauramos la matriz de modelado
-	referenceAxis(); // Dibujamos los ejes de referencia
-    drawLamp(fAngRotacion,fAnguloInferior); // Dibujamos la lampara
+	//referenceAxis(); // Dibujamos los ejes de referencia
+	drawLamp(fAngRotacion,fAnguloInferior,fAngRotacionShade); // Dibujamos la lampara
+
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	initTexture(0);
+	drawFloor(2.0f,2.0f); // Dibujamos el suelo
+	finishTexture();
+	initTextureSphere(1);
 	drawPixarBall(); // Dibujamos la bola de pixar
+	finishTexture();
+	initTexture(2);
+	drawWalls(2.0f,2.0f,4.0f); // Dibujamos las paredes
+	finishTexture();
 	glutSwapBuffers(); // Intercambiamos los buffers de visualizaci�n
     glFlush(); // Limpiamos el buffer de visualizaci�n
 }
@@ -77,11 +128,17 @@ void turn(){
 // Función leer teclado
 void inputKeyboard(unsigned char key, int x, int y){
 	switch(key){
-		case 'o': // Mover lampara arriba
-			fAnguloInferior += 0.5f;
+		case 'i': // Mover lampara arriba
+			if(fAnguloInferior>75) fAnguloInferior -= 0.5f;
+			break;
+		case 'k': // Mover lampara abajo
+			if(fAnguloInferior<120) fAnguloInferior += 0.5f;
+			break;
+		case 'j': // Mover lampara arriba
+			if(fAngRotacionShade<100) fAngRotacionShade += 0.5f;
 			break;
 		case 'l': // Mover lampara abajo
-			fAnguloInferior -= 0.5f;
+			if(fAngRotacionShade>-100) fAngRotacionShade -= 0.5f;
 			break;
 		case '+': // Zoom in
 			move(0.05f);
@@ -172,28 +229,82 @@ void inputSpecialKeyboard(int key, int x, int y) {
 			pitch += 0.02f;
 			turn();
 			break;
-        case GLUT_KEY_F1: // Cambiamos a perspectiva Cenital
-            perspective = Cenital;
-            perspAct = true;
-            break;
-        case GLUT_KEY_F2: // Cambiamos a perspectiva Picado
-            perspAct = true;
-            perspective = Picado;
-            break;
-        case GLUT_KEY_F3: // Cambiamos a perspectiva Normal
-            perspAct = true;
-            perspective = Normal;
-            break;
-        case GLUT_KEY_F4: // Cambiamos a perspectiva Contrapicado
-            perspAct = true;
-            perspective = Contrapicado;
-            break;
-        case GLUT_KEY_F5: // Cambiamos a perspectiva Nadir
-            perspAct = true;
-            perspective = Nadir;
-            break;
 	}
 	glutPostRedisplay();
+}
+int xOrigin = -1;
+int yOrigin = -1;
+
+// Mouse move
+void inputMouse(int x, int y){
+	if (xOrigin >= 0){
+		pitch -= (x - xOrigin) * 0.001f;
+		yaw -= (y - yOrigin) * 0.001f;
+	}
+	xOrigin = x;
+	yOrigin = y;
+	turn();
+	glutPostRedisplay();
+}
+
+void mouseButton(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT) {
+		if (state == GLUT_UP) {
+			xOrigin = -1;
+			yOrigin = -1;
+		}else {
+			xOrigin = x;
+			yOrigin = y;
+		}
+	}
+	if (button == 3){
+		move(0.05f);
+	}
+	if (button == 4){
+		move(-0.05f);
+	}
+}
+
+void processMenuStatus(int status, int x, int y) {
+	if (status == GLUT_MENU_IN_USE)
+		menuFlag = 1;
+	else
+		menuFlag = 0;
+}
+
+void processMainMenu(int option) {
+}
+
+void processFillMenu(int option) {
+	switch (option) {
+		case 1: glEnable(GL_FOG); break;
+		case 2: glDisable(GL_FOG); break;
+	}
+}
+
+void menuPerspectiva(int opcion){
+	perspective = opcion;
+    if(opcion==-1) perspAct=false;
+	else perspAct = true;    
+}
+
+void createPopupMenus() {
+
+	fillMenu = glutCreateMenu(processFillMenu);
+	glutAddMenuEntry("Con niebla", 1);
+	glutAddMenuEntry("Sin niebla", 2);
+	menuPersp = glutCreateMenu(menuPerspectiva);
+	glutAddMenuEntry("Nadir",NADIR);
+	glutAddMenuEntry("Cenital",CENITAL);
+	glutAddMenuEntry("Contrapicado",CONTRAPICADO);
+	glutAddMenuEntry("Normal",NORMAL);
+	glutAddMenuEntry("Picado",PICADO);
+	glutAddMenuEntry("Libre",-1);
+	mainMenu = glutCreateMenu(processMainMenu);
+	glutAddSubMenu("Niebla", fillMenu);
+	glutAddSubMenu("Perspectiva", menuPersp);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+	glutMenuStatusFunc(processMenuStatus);
 }
 
 // Funci�n que se ejecuta cuando el sistema no esta ocupado
@@ -223,6 +334,8 @@ int main(int argc, char **argv)
 	
     glutKeyboardFunc(inputKeyboard);
     glutSpecialFunc(inputSpecialKeyboard);
+	glutMotionFunc(inputMouse);
+	glutMouseFunc(mouseButton);
 
 	glClearColor (0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -230,13 +343,31 @@ int main(int argc, char **argv)
     //Renderización de luz
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
+	//glEnable(GL_LIGHT1);
 
 	// Materiales
 	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	//glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
+	// Niebla
+	glFogi(GL_FOG_MODE, GL_LINEAR);
+	glFogf(GL_FOG_START, 0.1);
+	glFogf(GL_FOG_END,8.0);
+	glFogf(GL_FOG_DENSITY,0.8);
+	glHint(GL_FOG_HINT,GL_NICEST);
+	float color[] = { 0.5,0.5,0.5,1.0};
+	glFogfv(GL_FOG_COLOR, color);
+	
+	// Blend
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+
+	createPopupMenus();
 
 	// Texturas
-	glEnable(GL_TEXTURE_2D);
+	textures[0] = texture("wood.jpeg");
+	textures[1] = texture("lamp.png");
+	textures[2] = texture("wall.png");
 
 	// Comienza la ejecuci�n del core de GLUT
 	glutMainLoop();
