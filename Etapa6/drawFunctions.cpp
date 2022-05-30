@@ -68,7 +68,8 @@ void drawLamp(GLfloat fAngRot,GLfloat fAngInf,GLfloat fAngRotShade){
 		glRotatef(45,0.0f,0.0f,-1.0f);
 
 		drawLampShade(0.3f,0.3f,fAngRotShade); // Lampara
-
+		GLfloat pos[]={0.0f, 0.0f, 0.0f,1.0f };
+		glLightfv(GL_LIGHT0, GL_POSITION,pos); // Actualizamos la posici�n de la luz
 		drawScrew(0.01f,0.06);
 		
 		

@@ -89,8 +89,7 @@ void Display() {
         perspectiva(perspective);
     } 
     glPushMatrix(); // Guardamos la matriz de modelado
-	glLoadIdentity();
-	glLightfv(GL_LIGHT0, GL_POSITION, position); // Actualizamos la posici�n de la luz
+
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient); // Actualizamos el color ambiente
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular); // Actualizamos el color especular	
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse); // Actualizamos el color difuso
