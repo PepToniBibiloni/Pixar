@@ -8,7 +8,7 @@ const int W_WIDTH = 500; // Tama�o incial de la ventana
 const int W_HEIGHT = 500;
 const int w_aux = 2;
 const int h_aux = 2;
-GLfloat fAngulo; // Variable que indica el �ngulo de rotaci�n de los ejes. 
+GLfloat fAngulo1=0.05f,fAngulo2=0.1f; // Variable que indica el �ngulo de rotaci�n de los ejes. 
 
 // Funci�n que visualiza la escena OpenGL
 void reshape(int w, int h) {
@@ -28,54 +28,51 @@ void reshape(int w, int h) {
 }
 
 // Funci�n que visualiza la escena OpenGL
-void Display(void)
+void Display (void)
 {
 	// Borramos la escena
 	glClear (GL_COLOR_BUFFER_BIT);
 
 	glPushMatrix();
+		// Rotamos las proximas primitivas
+		glRotatef (fAngulo1, 0.0f, 0.0f, 1.0f);
 		// Creamos a continuaci�n dibujamos los tres poligonos
-		glBegin (GL_POLYGON);
-			glColor3f (1.0f, 1.0f, 1.0f);
-			glVertex3f(0.0f, 0.0f, 0.0f);
+		glBegin (GL_QUADS);
 			glColor3f (0.0f, 1.0f, 0.0f);
-			glVertex3f(1.0f, 0.0f, 0.0f);
-			glColor3f (0.0f, 1.0f, 0.0f);
-			glVertex3f(-0.5f, 0.866f, 0.0f);
+			glVertex3f(0.0f, -0.02f, 0.0f);
+			glVertex3f(0.0f, 0.02f, 0.0f);
+			glColor3f (1.0f, 1.0f, 0.0f);
+			glVertex3f(0.5f, 0.02f, 0.0f);
+			glVertex3f(0.5f, -0.02f, 0.0f);
 		glEnd();
-
+		glTranslatef(0.5f,0.0f,0.0f);
+		glRotatef (fAngulo2, 0.0f, 0.0f, 1.0f);
 		glBegin (GL_POLYGON);
-			glColor3f (1.0f, 1.0f, 1.0f);
-			glVertex3f(0.0f, 0.0f, 0.0f);
-			glColor3f (1.0f, 0.0f, 0.0f);
-			glVertex3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(0.0f, -0.02f, 0.0f);
+			glVertex3f(0.0f, 0.02f, 0.0f);
 			glColor3f (0.0f, 0.0f, 1.0f);
-			glVertex3f(-0.5f, -0.866f, 0.0f);
+			glVertex3f(0.5f, 0.02f, 0.0f);
+			glVertex3f(0.5f, -0.02f, 0.0f);
 		glEnd();
-
-		glBegin (GL_POLYGON);
-			glColor3f (1.0f, 1.0f, 1.0f);
-			glVertex3f(0.0f, 0.0f, 0.0f);
-			glColor3f (0.0f, 1.0f, 1.0f);
-			glVertex3f(-0.5f, 0.866f, 0.0f);
-			glColor3f (0.0f, 0.0f, 1.0f);
-			glVertex3f(-0.5f, -0.866f, 0.0f);
-		glEnd();
-	glPopMatrix();
-	glRotatef (fAngulo, 0.0f, 0.0f, 1.0f);
+		glRotatef (fAngulo2, 0.0f, 0.0f,-1.0f);
+		glTranslatef(-0.5f,0.0f,0.0f);
+		glRotatef (fAngulo1, 0.0f, 0.0f,-1.0f);
 	glFlush();
-	glutSwapBuffers();
 }
+
 
 // Funci�n que se ejecuta cuando el sistema no esta ocupado
 void Idle (void)
 {
-	// Incrementamos el �ngulo
-	fAngulo += 0.3f;
-	// Si es mayor que dos pi la decrementamos
-	if (fAngulo > 360)
-		fAngulo -= 360;
-	// Indicamos que es necesario repintar la pantalla
+	fAngulo1 += 0.05f;
+	fAngulo2 += 0.1f;
+	if (fAngulo1 > 360.0f) {
+		fAngulo1 -= 360.0f;
+	}
+	if (fAngulo2 > 360.0f) {
+		fAngulo2 -= 360.0f;
+	}
+	
 	glutPostRedisplay();
 }
 
@@ -96,8 +93,8 @@ int main(int argc, char **argv)
 
 	// Indicamos cuales son las funciones de redibujado e idle
 	glutDisplayFunc(Display);
-	glutIdleFunc(Idle);
 	glutReshapeFunc(reshape);
+	glutIdleFunc(Idle);
 
 	// El color de fondo ser� el negro (RGBA, RGB + Alpha channel)
 	glClearColor (1.0f, 1.0f, 1.0f, 1.0f);

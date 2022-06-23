@@ -118,9 +118,9 @@ void inputKeyboard(unsigned char key, int x, int y){
 			diffuse[2] -= 0.1f;
 			break;
 		case '6': // Cambiamos sector difuso
-			diffuse[0] += 0.2f;
-			diffuse[1] += 0.2f;
-			diffuse[2] += 0.2f;
+			diffuse[0] += 0.1f;
+			diffuse[1] += 0.1f;
+			diffuse[2] += 0.1f;
 			break;
 		case 'a': // Mover luz hacia la derecha
 			position[0] += 0.1;
@@ -146,7 +146,7 @@ void inputKeyboard(unsigned char key, int x, int y){
 				glShadeModel(GL_FLAT);
 				printf("Flat Shading\n");
 			} else {
-				glShadeModel(GLU_SMOOTH); 
+				glShadeModel(GL_SMOOTH); 
 				printf("Smooth Shading\n");
 			}
 			break;

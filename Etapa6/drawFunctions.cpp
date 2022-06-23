@@ -3,13 +3,13 @@
 void referenceAxis()
 {
 	glBegin(GL_LINES);    // x
-	glColor3f(1.0f, 0.0f, 0.0f);
+	glColor3f(1.0f, 0.0f, 0.0f); // rojo
 	glVertex3f(-1.0f, 0.0f, 0.0f);
 	glVertex3f(1.0f, 0.0f, 0.0f);
 	glEnd();
 
 	glBegin(GL_LINES); // y
-	glColor3f(0.0f, 1.0f, 0.0f);
+	glColor3f(0.0f, 1.0f, 0.0f); // verde
 	glVertex3f(0.0f, -1.0f, 0.0f);
 	glVertex3f(0.0f, 1.0f, 0.0f);
 	glEnd();
@@ -68,8 +68,6 @@ void drawLamp(GLfloat fAngRot,GLfloat fAngInf,GLfloat fAngRotShade){
 		glRotatef(45,0.0f,0.0f,-1.0f);
 
 		drawLampShade(0.3f,0.3f,fAngRotShade); // Lampara
-		GLfloat pos[]={0.0f, 0.0f, 0.0f,1.0f };
-		glLightfv(GL_LIGHT0, GL_POSITION,pos); // Actualizamos la posici�n de la luz
 		drawScrew(0.01f,0.06);
 		
 		
@@ -187,6 +185,7 @@ void drawCylinder(GLfloat base, GLfloat height){
     qobj = gluNewQuadric();
 	gluQuadricDrawStyle(qobj, GLU_FILL); 
 	glRotatef(90.0f,-1.0f,0.0f,0.0f); 
+	glNormal3f(0.0f,0.0f,-1.0f);
 	gluDisk(qobj,0.0f,base,50,50); // Base
 	gluCylinder(qobj,base,base,height,50,50); // Cilindro
 	glTranslatef(0.0f,0.0f,height); 
@@ -210,7 +209,6 @@ void drawCone(GLfloat base, GLfloat height){
 // Funcion para dibujar parte superior de la lámpara
 void drawLampShade(GLfloat base,GLfloat height,GLfloat angleSh){     
 	float cx,cy,cz;     
-
 	cx=-0.16f; cy=0.06f; cz=0.0f;    
 	glTranslatef(cx,cy,cz);     //rotamos la cabeza de la lámpara     
 	glRotatef(-45,0.0f,0.0f,1.0f);
@@ -225,11 +223,17 @@ void drawLampShade(GLfloat base,GLfloat height,GLfloat angleSh){
 	glTranslatef(0.0f,0.35f,0.00f);     
 	glRotatef(90.0,1.0f,0.0f,0.0f);        
 	drawCone(base,height*1.3);
+	glColor3f(1.0f,1.0f,0.0f);
+	glTranslatef(0.0f,0.0f,0.2f);
+	glutSolidSphere(0.1f,50,50);
+	glTranslatef(0.0f,0.0f,-0.2f);
+	glColor3f(1.0f,1.0f,1.0f);
 	glRotatef(90.0,-1.0f,0.0f,0.0f);     
 	glTranslatef(0.0f,-0.35f,0.00f);     
 	glRotatef(-angleSh,1.0f,0.0f,0.0f);     
 	glRotatef(45,0.0f,0.0f,1.0f);
-	glTranslatef(-cx,-cy,-cz);   
+	glTranslatef(-cx,-cy,-cz);  
+	
 }
 
 // Funcion para dibujar pelota pixar

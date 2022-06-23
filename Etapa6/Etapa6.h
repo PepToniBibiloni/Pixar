@@ -19,8 +19,8 @@ GLfloat fAngRotacion=0.0f, fAnguloInferior=90.0f,fAngRotacionShade=0.0f;
 glm::vec3 pos = glm::vec3(0.0f,1.5f,5.0f);
 glm::vec3 front = glm::vec3(0.0f,0.0f,-1.0f);
 glm::vec3 up = glm::vec3(0.0f,1.0f,0.0f);
-GLfloat pitch = 0.0f;
-GLfloat yaw = 90.0f;
+GLfloat pitch = 00.0f;
+GLfloat yaw = 89.55f;
 
 //Perspectivas
 #define CENITAL 0
@@ -33,13 +33,12 @@ bool perspAct = false;
 
 //Luces
 GLfloat position[]={1.0f, 1.0f, 1.0f,1.0f };
-GLfloat dir[] = {10.0, 100.0,10.0}; 
 bool shade = false; 
 
 // Texturas
 GLuint textures[2];
 
-int fillMenu,menuPersp, mainMenu;
+int menuNieb,menuPersp,menuL, mainMenu;
 int menuFlag = 0;
 
 

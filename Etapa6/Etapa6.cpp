@@ -89,10 +89,12 @@ void Display() {
         perspectiva(perspective);
     } 
     glPushMatrix(); // Guardamos la matriz de modelado
-
+	glTranslatef(position[0],position[1],position[2]); // Transladamos la luz
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient); // Actualizamos el color ambiente
 	glLightfv(GL_LIGHT0, GL_SPECULAR, specular); // Actualizamos el color especular	
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse); // Actualizamos el color difuso
+	glLightfv(GL_LIGHT0, GL_POSITION, position); // Actualizamos la posici�n de la luz
+	glutSolidSphere(0.1,20,20);
 	glPopMatrix(); // Restauramos la matriz de modelado
 	//referenceAxis(); // Dibujamos los ejes de referencia
 	drawLamp(fAngRotacion,fAnguloInferior,fAngRotacionShade); // Dibujamos la lampara
@@ -274,12 +276,19 @@ void processMenuStatus(int status, int x, int y) {
 void processMainMenu(int option) {
 }
 
-void processFillMenu(int option) {
+void menuNiebla(int option) {
 	switch (option) {
 		case 1: glEnable(GL_FOG); break;
 		case 2: glDisable(GL_FOG); break;
 	}
 }
+void menuLuz(int option) {
+	switch (option) {
+		case 1: glEnable(GL_LIGHT0); break;
+		case 2: glDisable(GL_LIGHT0); break;
+	}
+}
+
 
 void menuPerspectiva(int opcion){
 	perspective = opcion;
@@ -289,9 +298,12 @@ void menuPerspectiva(int opcion){
 
 void createPopupMenus() {
 
-	fillMenu = glutCreateMenu(processFillMenu);
+	menuNieb = glutCreateMenu(menuNiebla);
 	glutAddMenuEntry("Con niebla", 1);
 	glutAddMenuEntry("Sin niebla", 2);
+	menuL = glutCreateMenu(menuLuz);
+	glutAddMenuEntry("ON", 1);
+	glutAddMenuEntry("OFF", 2);
 	menuPersp = glutCreateMenu(menuPerspectiva);
 	glutAddMenuEntry("Nadir",NADIR);
 	glutAddMenuEntry("Cenital",CENITAL);
@@ -300,8 +312,9 @@ void createPopupMenus() {
 	glutAddMenuEntry("Picado",PICADO);
 	glutAddMenuEntry("Libre",-1);
 	mainMenu = glutCreateMenu(processMainMenu);
-	glutAddSubMenu("Niebla", fillMenu);
+	glutAddSubMenu("Niebla", menuNieb);
 	glutAddSubMenu("Perspectiva", menuPersp);
+	glutAddSubMenu("Luz",menuL);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 	glutMenuStatusFunc(processMenuStatus);
 }
@@ -339,10 +352,10 @@ int main(int argc, char **argv)
 	glClearColor (0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
+
     //Renderización de luz
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	//glEnable(GL_LIGHT1);
 
 	// Materiales
 	glEnable(GL_COLOR_MATERIAL);
